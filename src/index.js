@@ -6,7 +6,10 @@ import imageCardTpl from './templates/imageCardTpl.hbs';
 import { error } from '@pnotify/core';
 
 const picturesApiService = new API();
-const loadMoreBtn = new LoadMoreBtn('.load-more-btn');
+const loadMoreBtn = new LoadMoreBtn({ 
+  selector: '.load-more-btn',
+  hidden: true,
+});
 
 const refs = {
   searchForm: document.querySelector('.search-form'),
@@ -36,9 +39,10 @@ function fatchAndRenderImages() {
     .catch(onFetchError);
 }
 
-function createImagesMarkup({hits}) {
-  loadMoreBtn.disable();
-  if(!hits.length) {
+function createImagesMarkup(data) {
+  // loadMoreBtn.disable();
+  if(!data.hits.length) {
+    loadMoreBtn.hide();
     error({
           text: `Not found! Try again`,
           mode: 'dark',
@@ -47,11 +51,15 @@ function createImagesMarkup({hits}) {
           delay: 500,
         });
     return;
-  }else   if(!(hits.length < 12)) {
-    loadMoreBtn.enable();
+  }else   if(data.hits.length < 12  ||  picturesApiService.perPage * (picturesApiService.page - 1) === data.total) {
+    loadMoreBtn.hide();
+    
+    // loadMoreBtn.enable();
+  }else {
+    loadMoreBtn.show();
   }
   
-  const imagesMarkup = imageCardTpl(hits);
+  const imagesMarkup = imageCardTpl(data.hits);
   refs.gallery.insertAdjacentHTML('beforeend', imagesMarkup); 
   refs.gallery.scrollIntoView({
     behavior: 'smooth',

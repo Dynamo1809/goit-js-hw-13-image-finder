@@ -1,12 +1,22 @@
 export default class LoadMoreBtn {
-  constructor(selector) {
+  constructor({ selector, hidden = false }) {
     this.btnRef = document.querySelector(selector);
-  }
-  enable() {
-    this.btnRef.disabled = false;
+  
+    hidden && this.hide();
   }
 
-  disable() {
-    this.btnRef.disabled = true;
+  show() {
+    this.btnRef.classList.remove('is-hidden');
   }
+
+  hide() {
+    this.btnRef.classList.add('is-hidden');
+  }
+  // enable() {
+  //   this.btnRef.disabled = false;
+  // }
+
+  // disable() {
+  //   this.btnRef.disabled = true;
+  // }
 }
